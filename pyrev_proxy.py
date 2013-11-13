@@ -1,12 +1,17 @@
 #!/bin/sh -
 "exec" "python" "-O" "$0" "$@"
 
+"""
+Based on 
+        Tiny HTTP Proxy in Python
+        by SUZUKI Hisao 
+        http://www.oki-osk.jp/esc/python/proxy/
+"""
+
 import os,sys,thread,socket
 import BaseHTTPServer, select, SocketServer, urlparse
 
-
 #********* CONSTANT VARIABLES *********
-BACKLOG = 50            # how many pending connections queue will hold
 MAX_DATA_RECV = 4096    # max number of bytes we receive at once
 DEBUG = True           # set to True to see the debug msgs
 DROP = "POST / "
@@ -48,7 +53,7 @@ class ProxyHandler (BaseHTTPServer.BaseHTTPRequestHandler):
     def do_GET(self):        
         (scm, netloc, path, params, query, fragment) = urlparse.urlparse(
             self.path, 'http')
-        if (self.command==DROP.split()[0] and path==DROP.split()[1]) or (WEBSERVER in self.headers['Host'] and '/server-status' not in path): #rules to drop comunication before to connect to Apache
+        if (self.command==DROP.split()[0] and path==DROP.split()[1]) or (WEBSERVER in self.headers['Host'] and '/server-status' not in path): #rules to drop comunication before connecting to Apache
             self.send_error(404)
             self.connection.close()
             return
